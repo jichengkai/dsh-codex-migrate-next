@@ -42,6 +42,92 @@ test('project-less Codex conversations use one canonical picker key and a visibl
   assert.equal(created[0].cwd, join(outputDir, 'codex-unprojected'))
 })
 
+test('Codex imports target the DSH Session V3 handle contract and lifecycle', async (t) => {
+  const root = mkdtempSync(join(tmpdir(), 'dsh-v3-import-'))
+  t.after(() => rmSync(root, { recursive: true, force: true }))
+  const codexDir = join(root, '.codex')
+  const outputDir = join(root, 'out')
+  const sessionsDir = join(codexDir, 'sessions')
+  mkdirSync(sessionsDir, { recursive: true })
+  writeFileSync(join(sessionsDir, 'conversation.jsonl'), [
+    JSON.stringify({ type: 'session_meta', timestamp: '2026-08-26T01:00:00Z', payload: { id: 'codex-v3', cwd: 'D:\\project-a' } }),
+    JSON.stringify({ type: 'response_item', payload: { id: 'user-1', type: 'message', role: 'user', content: [{ type: 'input_text', text: '请检查项目' }] } }),
+    JSON.stringify({ type: 'response_item', payload: { id: 'tool-1', type: 'function_call', name: 'inspect', call_id: 'call-1', arguments: '{"scope":"src"}' } }),
+    JSON.stringify({ type: 'response_item', payload: { id: 'assistant-1', type: 'message', role: 'assistant', content: [{ type: 'output_text', text: '已检查。' }] } }),
+  ].join('\n'))
+
+  const records = new Map()
+  const opened = []
+  const makeHandle = (id, access) => {
+    const record = records.get(id)
+    let closed = false
+    return {
+      id,
+      header: record.header,
+      access,
+      async read() {
+        assert.equal(closed, false)
+        return { eventState: 'detached', events: record.events.slice() }
+      },
+      async append(events) {
+        assert.equal(access, 'write')
+        assert.equal(closed, false)
+        record.events.push(...events)
+      },
+      async flush() { assert.equal(access, 'write') },
+      async close() { closed = true },
+    }
+  }
+  const persistence = {
+    async create(header) {
+      if (records.has(header.id)) throw new Error(`session "${header.id}" already exists`)
+      records.set(header.id, { header: { ...header }, events: [] })
+      return makeHandle(header.id, 'write')
+    },
+    async open(id, access) {
+      opened.push([id, access])
+      return makeHandle(id, access)
+    },
+    async list() {
+      return Array.from(records.values(), (record) => ({ header: record.header, eventCount: record.events.length }))
+    },
+  }
+  const ctx = { get: (name) => ({ sessionPersistence: persistence }[name]), interval: () => () => {}, timeout: () => {} }
+  const logic = createLogic(ctx, {
+    codexDir,
+    outputDir,
+    bridgeEnabled: false,
+    projectMode: 'all',
+    sessionMode: 'all',
+    includeMcp: false,
+    includeMemories: false,
+    includeMcpMemories: false,
+    includeMemorySkill: false,
+    includeAgentsMd: false,
+  }, root)
+  await logic.init()
+  await logic.syncNow({ trigger: 'test' })
+  const result = logic.getState().status.lastSyncResult
+
+  assert.equal(result.dsh.imported, 1)
+  assert.equal(records.size, 1)
+  const record = records.values().next().value
+  assert.equal(record.header.version, 3)
+  assert.equal(record.header.isSeeded, false)
+  assert.equal(record.header.delegationDepth, 0)
+  assert.equal(typeof record.header.createdAt, 'number')
+  assert.equal(opened.length, 0)
+  assert.deepEqual(record.events.map((event) => event.seq), Array.from({ length: record.events.length }, (_, index) => index))
+  assert.deepEqual(record.events.filter((event) => event.type === 'turn/start').map((event) => event.data.turn), [1])
+  assert.deepEqual(record.events.filter((event) => event.type === 'turn/end').map((event) => event.data.turn), [1])
+  assert.equal(record.events.some((event) => event.type === 'step/start'), true)
+  assert.equal(record.events.some((event) => event.type === 'step/end'), true)
+  for (const event of record.events) {
+    if (['user/message', 'assistant/message', 'tool/result'].includes(event.type)) assert.equal(event.surfaceOp, 'append')
+    if (event.type === 'assistant/message') assert.deepEqual(event.data.stream, [])
+  }
+})
+
 test('a DSH project imports every active conversation through the structured Codex adapter', async (t) => {
   const root = mkdtempSync(join(tmpdir(), 'dsh-project-import-'))
   t.after(() => rmSync(root, { recursive: true, force: true }))

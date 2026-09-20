@@ -1,5 +1,33 @@
 # Changelog
 
+## 2.0.3 — 2026-09-20
+
+### Fixed
+
+- Open imported Codex tasks through the host operating system after registration, so browsers that block `codex://` navigation no longer leave the user on an apparently stalled DSH action.
+- Keep browser protocol navigation as a fallback and expose an explicit “Opened in Codex” action state after a successful handoff.
+
+## 2.0.2 — 2026-09-15
+
+Follow-up compatibility fix for the npm `@deepseek-ai/dsh` 0.1.5 release line.
+
+### Fixed
+
+- Fixed the DSH assistant action's session injection so “Continue in Codex” imports the active conversation instead of using the message id.
+- Made Codex app-server temp-directory cleanup tolerant of short-lived Windows file locks after a successful import.
+- Bounded metadata reads during inventory scans so large Codex histories do not block the DSH UI event loop.
+- Read full transcripts asynchronously during selected/full sync so large migrations keep the Host responsive while they run.
+
+## 2.0.1 — 2026-09-15
+
+Compatibility patch for the npm `@deepseek-ai/dsh` 0.1.5 release line.
+
+### Fixed
+
+- Adapted Codex → DSH imports to the SessionHandle persistence API introduced in DSH 0.1.3, including explicit flush/close lifecycle and snapshot-shaped reads.
+- Emit validated Session V3 headers and contiguous turn/step/message events, while preserving legacy service persistence as a compatibility fallback.
+- Updated the web client injection graph and peer ranges to the modules shipped by DSH 0.1.5.
+
 ## 2.0.0 — 2026-08-28
 
 Version 2.0 replaces the experimental shared-conversation architecture with explicit, predictable one-way structured imports. It also introduces the Codex companion MCP/Skill package, local MCP memory, native DSH → Codex actions, project batches, and a faster settings experience.

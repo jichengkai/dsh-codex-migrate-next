@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { mkdtempSync, rmSync, utimesSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, readFileSync, rmSync, utimesSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
@@ -50,4 +50,24 @@ test('isolates a corrupted JSONL file without discarding valid cached inventory'
   assert.equal(result.errors.length, 1)
   assert.equal(result.errors[0].path, bad)
   assert.equal(result.stats.durationMs >= 0, true)
+})
+
+test('supports a bounded reader for metadata-only scans', (t) => {
+  const directory = mkdtempSync(join(tmpdir(), 'inventory-prefix-'))
+  t.after(() => rmSync(directory, { recursive: true, force: true }))
+  const file = join(directory, 'session.jsonl')
+  writeFileSync(file, JSON.stringify({ id: 'header' }), 'utf8')
+  let reads = 0
+  const indexer = createInventoryIndexer({
+    cachePath: join(directory, 'cache.json'),
+    read: (path) => { reads += 1; return readFilePrefix(path) },
+    parse: (path, text) => JSON.parse(text.trim()),
+  })
+  const result = indexer.scan([file])
+  assert.equal(reads, 1)
+  assert.equal(result.items[0].value.id, 'header')
+
+  function readFilePrefix(path) {
+    return readFileSync(path, 'utf8').split(/\r?\n/)[0]
+  }
 })

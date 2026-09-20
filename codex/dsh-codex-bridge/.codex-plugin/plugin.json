@@ -1,6 +1,6 @@
 {
   "name": "dsh-codex-bridge",
-  "version": "2.0.0",
+  "version": "2.0.3",
   "description": "Import Codex tasks into DeepSeek Harness and manage local persistent MCP memory.",
   "author": {
     "name": "polarskicpl",

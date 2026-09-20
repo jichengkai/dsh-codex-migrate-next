@@ -10,6 +10,8 @@ import { startBridgeServer } from '../lib/bridge-server.js'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
 const temp = mkdtempSync(join(tmpdir(), 'dsh-one-way-bridge-'))
+const originalUserProfile = process.env.USERPROFILE
+process.env.USERPROFILE = temp
 const tokenPath = join(temp, 'install-token')
 const codexPath = join(temp, 'codex')
 const hostPath = join(temp, 'host')
@@ -110,6 +112,8 @@ try {
 } finally {
   child.kill()
   server.dispose()
+  if (originalUserProfile === undefined) delete process.env.USERPROFILE
+  else process.env.USERPROFILE = originalUserProfile
   rmSync(temp, { recursive: true, force: true })
 }
 

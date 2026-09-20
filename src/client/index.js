@@ -154,6 +154,7 @@ const zh = {
   noImportedConversations: '还没有导入对话。完成一次同步后会显示在这里。',
   continueInCodex: '在 Codex 继续',
   continuingInCodex: '正在注册到 Codex…',
+  continuedInCodex: '已在 Codex 打开',
   continueInCodexFail: '注册到 Codex 失败: {err}',
   bridgeMemory: '记忆导入',
   memoryProvider: '支持的记忆类型',
@@ -278,6 +279,7 @@ const en = {
   noImportedConversations: 'No imported conversations yet. They appear here after a sync.',
   continueInCodex: 'Continue in Codex',
   continuingInCodex: 'Registering with Codex…',
+  continuedInCodex: 'Opened in Codex',
   continueInCodexFail: 'Could not register with Codex: {err}',
   bridgeMemory: 'Memory Import',
   memoryProvider: 'Supported memory types',
@@ -394,22 +396,25 @@ function apply(ctx) {
     }).catch(() => {})
   }, 700), 'codex-sync.bridge-navigation')
 
-  function ContinueInCodexAction({ sessionId }) {
+  function ContinueInCodexAction({ messageId, sessionId }) {
     const [busy, setBusy] = React.useState(false)
     const [failure, setFailure] = React.useState('')
+    const [opened, setOpened] = React.useState(false)
     const active = ctx.locale.getSnapshot().active
     const dict = active === 'zh' ? zh : en
-    const label = busy ? dict.continuingInCodex : dict.continueInCodex
+    const label = busy ? dict.continuingInCodex : opened ? dict.continuedInCodex : dict.continueInCodex
     async function onClick() {
       if (busy) return
-      setBusy(true); setFailure('')
+      setBusy(true); setFailure(''); setOpened(false)
       try {
+        if (typeof sessionId !== 'string' || sessionId === '') throw new Error('当前 DSH 会话不可用')
         const imported = await call('importDshConversationToCodex', { dshConversationId: sessionId })
-        openCodexConversation(imported?.codexConversationId)
+        if (imported?.opened !== true) openCodexConversation(imported?.codexConversationId)
+        setOpened(true)
       } catch (err) { setFailure(errText(err)) } finally { setBusy(false) }
     }
     return h('button', {
-        type: 'button', className: 'cxs-message-action', disabled: busy,
+        type: 'button', className: 'cxs-message-action', disabled: busy, 'data-opened': opened ? 'true' : 'false',
         title: failure || label, 'aria-label': failure ? dict.continueInCodexFail.replace('{err}', failure) : label,
         onClick,
       }, h('svg', { viewBox: '0 0 24 24', 'aria-hidden': 'true' },
@@ -924,6 +929,10 @@ function apply(ctx) {
           order: 20,
           label: () => t('continueInCodex'),
           locale: NS,
+          // `conversation.chat.assistant-actions` is message-scoped in DSH
+          // 0.1.5. The owner receives `messageId`; the registration inject
+          // callback supplies the enclosing Session id used by our remote.
+          inject: (sessionId) => ({ sessionId }),
         }, ContinueInCodexAction)
       } catch (err) {
         console.error('dsh-codex-migrate: assistant action registration failed', err)

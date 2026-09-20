@@ -1,6 +1,21 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { codexResponseItems, codexVisibleImportJsonl } from '../lib/bridge/codex-app-server.js'
+import { codexResponseItems, codexVisibleImportJsonl, openCodexThread } from '../lib/bridge/codex-app-server.js'
+
+test('Codex thread opener uses the native protocol handler instead of browser navigation', async () => {
+  const calls = []
+  const result = await openCodexThread('01a0a55e-459d-74b3-9e6a-b8f1a34dba5e', {
+    platform: 'win32',
+    openUrl(url) { calls.push(url) },
+  })
+  assert.deepEqual(calls, ['codex://threads/01a0a55e-459d-74b3-9e6a-b8f1a34dba5e'])
+  assert.equal(result.opened, true)
+  assert.equal(result.method, 'injected')
+})
+
+test('Codex thread opener rejects values that could escape the native command boundary', async () => {
+  await assert.rejects(() => openCodexThread("thread'; Remove-Item C:\\\\*", { openUrl() {} }), /invalid/)
+})
 
 test('Codex app-server history injection preserves user and assistant roles', () => {
   const items = codexResponseItems([
