@@ -1,6 +1,6 @@
 {
   "name": "dsh-codex-migrate",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "One-way structured conversation, project, MCP, memory, and context migration between Codex and DeepSeek Harness. Codex 与 DSH 的单向结构化迁移插件。",
   "keywords": ["dsh", "deepseek-harness", "codex", "migration", "conversation-import", "mcp", "plugin", "dsh-plugin"],
   "repository": {

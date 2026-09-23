@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.4 — 2026-09-23
+
+Documentation and metadata release on top of 2.0.3; no migration behavior changes.
+
+### Changed
+
+- Include the DSH 0.1.5 compatibility and handoff-fix statement in the English and Chinese READMEs shipped on npm.
+- Align the package, Codex companion, MCP server, and bridge client version metadata at 2.0.4.
+- Keep the supported target explicit: npm `@deepseek-ai/dsh@0.1.5-rc.2` (`latest` on 2026-09-23); npm `next` and `alpha` are not claimed as supported.
+
 ## 2.0.3 — 2026-09-20
 
 ### Fixed

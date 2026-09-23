@@ -8,6 +8,16 @@
 
 Version 2.0 turns the plugin into a two-sided migration bridge. Import Codex tasks into DSH, or move one DSH conversation—or every active conversation in a project—into Codex. Every action is an explicit one-time import; the source conversation is never modified later by background synchronization.
 
+## v2.0.4 compatibility update
+
+`dsh-codex-migrate@2.0.4` carries the compatibility fixes introduced in v2.0.3 and is verified with the public npm `@deepseek-ai/dsh@0.1.5-rc.2` (`latest` as checked on 2026-09-23). Those fixes address DSH's newer session persistence and Web client modules:
+
+- **Codex → DSH:** write valid Session V3 events through the lifecycle-scoped `SessionHandle` API, including flush/close, with a fallback for older persistence services.
+- **DSH Web UI:** update the client injection graph, use the active conversation's session ID for “Continue in Codex,” and keep large-history scans responsive with bounded metadata reads and asynchronous transcript reads.
+- **DSH → Codex:** open the imported task through the host operating system when a browser blocks `codex://` navigation, while retaining browser navigation as a fallback.
+
+The npm `next` and `alpha` DSH channels are not claimed as supported by this release. See the [changelog](./CHANGELOG.md) for the release history.
+
 ## What's new in v2.0
 
 - **Two-way one-shot imports:** Codex → DSH and DSH → Codex both convert history into the target's structured conversation format instead of flattening everything into plain text.

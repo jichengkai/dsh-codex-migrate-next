@@ -9,7 +9,7 @@ import { createMemoryStore } from './memory-store.mjs'
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const MANIFEST = JSON.parse(fs.readFileSync(path.join(ROOT, '.codex-plugin', 'plugin.json'), 'utf8'))
 const SERVER_NAME = 'dsh-codex-bridge'
-const SERVER_VERSION = MANIFEST.version || '2.0.3'
+const SERVER_VERSION = MANIFEST.version || '2.0.4'
 const TOKEN_PATH = process.env.DSH_CODEX_BRIDGE_TOKEN_FILE || path.join(os.homedir(), '.codex', 'dsh-codex-bridge', 'install-token')
 const MEMORY_PATH = process.env.DSH_CODEX_BRIDGE_MEMORY_FILE || path.join(os.homedir(), '.codex', 'dsh-codex-bridge', 'memory.jsonl')
 const BRIDGE_PORT = Number.parseInt(process.env.DSH_CODEX_BRIDGE_PORT || '46371', 10)
