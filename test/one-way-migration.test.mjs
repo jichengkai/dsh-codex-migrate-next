@@ -42,8 +42,8 @@ test('project-less Codex conversations use one canonical picker key and a visibl
   assert.equal(created[0].cwd, join(outputDir, 'codex-unprojected'))
 })
 
-test('Codex imports target the DSH Session V3 handle contract and lifecycle', async (t) => {
-  const root = mkdtempSync(join(tmpdir(), 'dsh-v3-import-'))
+test('Codex imports target the DSH Session V4 handle contract and lifecycle', async (t) => {
+  const root = mkdtempSync(join(tmpdir(), 'dsh-v4-import-'))
   t.after(() => rmSync(root, { recursive: true, force: true }))
   const codexDir = join(root, '.codex')
   const outputDir = join(root, 'out')
@@ -53,7 +53,9 @@ test('Codex imports target the DSH Session V3 handle contract and lifecycle', as
     JSON.stringify({ type: 'session_meta', timestamp: '2026-08-26T01:00:00Z', payload: { id: 'codex-v3', cwd: 'D:\\project-a' } }),
     JSON.stringify({ type: 'response_item', payload: { id: 'user-1', type: 'message', role: 'user', content: [{ type: 'input_text', text: '请检查项目' }] } }),
     JSON.stringify({ type: 'response_item', payload: { id: 'tool-1', type: 'function_call', name: 'inspect', call_id: 'call-1', arguments: '{"scope":"src"}' } }),
+    JSON.stringify({ type: 'response_item', payload: { id: 'result-1', type: 'function_call_output', call_id: 'call-1', output: 'ok' } }),
     JSON.stringify({ type: 'response_item', payload: { id: 'assistant-1', type: 'message', role: 'assistant', content: [{ type: 'output_text', text: '已检查。' }] } }),
+    JSON.stringify({ type: 'response_item', payload: { id: 'tool-2', type: 'function_call', name: 'unfinished', arguments: '{}' } }),
   ].join('\n'))
 
   const records = new Map()
@@ -112,7 +114,7 @@ test('Codex imports target the DSH Session V3 handle contract and lifecycle', as
   assert.equal(result.dsh.imported, 1)
   assert.equal(records.size, 1)
   const record = records.values().next().value
-  assert.equal(record.header.version, 3)
+  assert.equal(record.header.version, 4)
   assert.equal(record.header.isSeeded, false)
   assert.equal(record.header.delegationDepth, 0)
   assert.equal(typeof record.header.createdAt, 'number')
@@ -122,9 +124,35 @@ test('Codex imports target the DSH Session V3 handle contract and lifecycle', as
   assert.deepEqual(record.events.filter((event) => event.type === 'turn/end').map((event) => event.data.turn), [1])
   assert.equal(record.events.some((event) => event.type === 'step/start'), true)
   assert.equal(record.events.some((event) => event.type === 'step/end'), true)
+  const advertisedCalls = record.events.flatMap((event) => event.type === 'assistant/message'
+    ? event.data.message.content.filter((block) => block.type === 'tool-call').map((block) => block.id)
+    : [])
+  const emittedCalls = record.events.filter((event) => event.type === 'tool/call').map((event) => event.data.callId)
+  assert.deepEqual(emittedCalls, advertisedCalls)
+  assert.deepEqual(emittedCalls, ['call-1', 'cxcall-1'])
+  assert.equal(record.events.some((event) => event.type === 'tool/result' && event.data.message.toolCallId === 'cxcall-1' && event.data.message.isError === true), true)
   for (const event of record.events) {
     if (['user/message', 'assistant/message', 'tool/result'].includes(event.type)) assert.equal(event.surfaceOp, 'append')
-    if (event.type === 'assistant/message') assert.deepEqual(event.data.stream, [])
+    if (event.type === 'user/message') assert.equal(event.data.source.kind, 'user')
+    if (event.type === 'assistant/message') {
+      assert.deepEqual(event.data.stream, [])
+      assert.ok(Array.isArray(event.data.message.content))
+      assert.deepEqual(event.data.message.source, {
+        kind: 'model', provider: 'codex', model: 'imported', importedBy: 'dsh-codex-migrate',
+      })
+      for (const block of event.data.message.content.filter((block) => block.type === 'tool-call')) {
+        assert.equal(typeof block.id, 'string')
+        assert.equal(typeof block.name, 'string')
+        assert.equal(typeof block.arguments, 'string')
+      }
+    }
+    if (event.type === 'tool/result') {
+      assert.equal(event.data.message.role, 'tool')
+      assert.equal(event.data.message.source.kind, 'tool')
+      assert.equal(typeof event.data.message.toolCallId, 'string')
+      assert.equal(event.data.message.source.callId, event.data.message.toolCallId)
+      for (const block of event.data.message.content) assert.notEqual(block.type, 'tool-result')
+    }
   }
 })
 
