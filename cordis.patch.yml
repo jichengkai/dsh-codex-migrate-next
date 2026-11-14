@@ -1,15 +1,15 @@
-# dsh-codex-migrate bundle patch — one insert over the profile's empty root.
-# Rows in later layers address this row by id `dsh-codex-migrate` (last write wins).
+# dsh-codex-migrate-next bundle patch — one insert over the profile's empty root.
+# Rows in later layers address this row by id `dsh-codex-migrate-next` (last write wins).
 - insert:
-    - id: dsh-codex-migrate
-      name: 'dsh-codex-migrate'
+    - id: dsh-codex-migrate-next
+      name: 'dsh-codex-migrate-next'
       config:
         # Codex data directory; empty = auto-detect (~/.codex).
         codexDir: ''
         # Output directory for migrated artifacts; empty = <DSH_HOME>/codex-sync.
         outputDir: ''
         # en | zh | auto(follow the UI locale reported by the client).
-        language: 'en'
+        language: 'auto'
         # Local one-shot handoff transport. No window scanning or UI injection.
         bridgeEnabled: true
         bridgePort: 46371

@@ -8,11 +8,12 @@ import { dirname, join } from 'node:path'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
 const src = readFileSync(join(root, 'src', 'client', 'index.js'), 'utf8')
+const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
 const outDir = join(root, 'lib')
 mkdirSync(outDir, { recursive: true })
 
 const bundle = `window.__ModuleLoader__.load({
-  id: "dsh-codex-migrate",
+  id: ${JSON.stringify(pkg.name)},
   factory: (require) => {
     var module = { exports: {} };
     var exports = module.exports;

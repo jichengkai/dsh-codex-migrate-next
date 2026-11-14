@@ -1,14 +1,23 @@
-# dsh-codex-migrate
+# dsh-codex-migrate-next
 
 <div align="center">
-  <a href="https://github.com/polarskicpl/dsh-codex-migrate"><img src="https://raw.githubusercontent.com/polarskicpl/dsh-codex-migrate/main/images/banner.webp" alt="dsh-codex-migrate banner" width="520"></a>
+  <a href="https://github.com/jichengkai/dsh-codex-migrate"><img src="https://raw.githubusercontent.com/jichengkai/dsh-codex-migrate/main/images/banner.webp" alt="dsh-codex-migrate banner" width="520"></a>
   <p><strong>Predictable one-way structured migration between Codex and DeepSeek Harness</strong></p>
   <p>English · <a href="./README.zh.md">中文</a></p>
 </div>
 
+> **Fork notice.** `dsh-codex-migrate-next` is a maintained fork of [`dsh-codex-migrate`](https://github.com/polarskicpl/dsh-codex-migrate) by *nightcrusing* (MIT), retargeted at DeepSeek Harness 0.2.x. Install either this package or the upstream one — never both: both register the same Codex migration service.
+
+## v2.0.5 — DeepSeek Harness 0.2.x
+
+- Session persistence targets the DSH Session V4 contract: settlement `stream` and `turn`/`step` fields, tool-call advertising before every `tool/call`, `tool`-role results, and interrupted Codex calls preserved as explicit failed results.
+- Peer dependencies and `engines.dsh` declare `>=0.2.2-rc.2`.
+- The settings panel's remote namespace mounts again (its Typert codec now supplies the `create()` factory the client registry requires); a failed mount reports its cause instead of an endless loading hint.
+- Panel language follows the DSH UI locale (`language: auto`); `zh-CN`/`zh-Hans` resolve to Chinese and existing `en` installs migrate once.
+
 Version 2.0 turns the plugin into a two-sided migration bridge. Import Codex tasks into DSH, or move one DSH conversation—or every active conversation in a project—into Codex. Every action is an explicit one-time import; the source conversation is never modified later by background synchronization.
 
-## v2.0.4 compatibility update
+## v2.0.4 compatibility update (upstream 2.0.4)
 
 `dsh-codex-migrate@2.0.4` carries the compatibility fixes introduced in v2.0.3 and is verified with the public npm `@deepseek-ai/dsh@0.1.5-rc.2` (`latest` as checked on 2026-09-23). Those fixes address DSH's newer session persistence and Web client modules:
 

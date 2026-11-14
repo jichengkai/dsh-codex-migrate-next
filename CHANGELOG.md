@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.0.5 — 2026-11-14
+
+Maintained fork, published as `dsh-codex-migrate-next`, retargeted at DeepSeek Harness 0.2.x.
+
+### Fixed
+
+- The settings panel mounts its Remote namespace again: the hand-written Typert codec now provides the `create()` factory the Client registry requires, which previously aborted `$mount` and made every call fail with `remote.codexSync unavailable yet`.
+- A failed Remote mount or state read is reported in the panel with its cause and a retry action, instead of an endless loading hint.
+- The panel language follows the DSH UI locale by default (`language: auto`); locale ids with a region tag (`zh-CN`, `zh-Hans`) resolve to Chinese, and an existing stored `en` preference migrates once.
+
+### Changed
+
+- Session persistence targets the Session V4 contract: settlement `stream` and `turn`/`step` fields, `tool-call` blocks advertised before each `tool/call`, `tool`-role results, and interrupted Codex calls preserved as explicit failed results instead of dropped calls.
+- `peerDependencies` and `engines.dsh` declare `>=0.2.2-rc.2`; npm `next`/`alpha` DSH channels remain unclaimed.
+- Package renamed to `dsh-codex-migrate-next`; the Cordis row id follows the package name.
+- Added `scripts/verify-import-against-dsh.mjs`, which migrates a synthetic Codex conversation and validates the result with the installed `Session.fromRestore`.
+
 ## 2.0.4 — 2026-09-23
 
 Documentation and metadata release on top of 2.0.3; no migration behavior changes.

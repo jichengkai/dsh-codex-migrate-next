@@ -1,14 +1,23 @@
-# dsh-codex-migrate
+# dsh-codex-migrate-next
 
 <div align="center">
-  <a href="https://github.com/polarskicpl/dsh-codex-migrate"><img src="https://raw.githubusercontent.com/polarskicpl/dsh-codex-migrate/main/images/banner.webp" alt="dsh-codex-migrate banner" width="520"></a>
+  <a href="https://github.com/jichengkai/dsh-codex-migrate"><img src="https://raw.githubusercontent.com/jichengkai/dsh-codex-migrate/main/images/banner.webp" alt="dsh-codex-migrate banner" width="520"></a>
   <p><strong>在 Codex 与 DeepSeek Harness 之间进行可预测的单向结构化迁移</strong></p>
   <p><a href="./README.md">English</a> · 中文</p>
 </div>
 
 v2.0 将插件从“导出工具”升级为双端迁移桥：既可以把 Codex 对话导入 DSH，也可以从 DSH 把单个对话或整个项目的对话批量导入 Codex。每次操作都是明确的一次性迁移，不在后台修改源对话。
 
-## v2.0.4 兼容性更新
+> **Fork 说明。** `dsh-codex-migrate-next` 是 [`dsh-codex-migrate`](https://github.com/polarskicpl/dsh-codex-migrate)（作者 *nightcrusing*，MIT）的维护分支，适配 DeepSeek Harness 0.2.x。本包与原版只能装一个：两者注册同一个 Codex 迁移服务。
+
+## v2.0.5 — 适配 DeepSeek Harness 0.2.x
+
+- 会话持久化改用 DSH Session V4 契约：结算字段 `stream` 与 `turn`/`step` 齐备，`tool/call` 之前先在 assistant 消息里声明 tool-call，工具结果为 `tool` 角色，Codex 里未完成的调用保留为显式失败结果。
+- 对等依赖与 `engines.dsh` 声明 `>=0.2.2-rc.2`。
+- 设置面板的 remote 命名空间恢复挂载（Typert codec 补上了客户端注册表要求的 `create()` 工厂）；挂载失败会直接显示原因，不再无限「加载中」。
+- 面板语言默认跟随 DSH 界面（`language: auto`）；`zh-CN`/`zh-Hans` 都识别为中文，已存为 `en` 的旧配置会迁移一次。
+
+## v2.0.4 兼容性更新（上游 2.0.4）
 
 `dsh-codex-migrate@2.0.4` 延续了 v2.0.3 已实现的兼容修复，并针对公开 npm 的 `@deepseek-ai/dsh@0.1.5-rc.2` 验证（截至 2026-09-23 为 `latest`）。这些修复解决了 DSH 新版会话持久化与 Web 客户端模块变化带来的兼容问题：
 

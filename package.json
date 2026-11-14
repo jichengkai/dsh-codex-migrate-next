@@ -1,11 +1,20 @@
 {
-  "name": "dsh-codex-migrate",
-  "version": "2.0.4",
+  "name": "dsh-codex-migrate-next",
+  "version": "2.0.5",
   "description": "One-way structured conversation, project, MCP, memory, and context migration between Codex and DeepSeek Harness. Codex 与 DSH 的单向结构化迁移插件。",
-  "keywords": ["dsh", "deepseek-harness", "codex", "migration", "conversation-import", "mcp", "plugin", "dsh-plugin"],
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "codex",
+    "migration",
+    "conversation-import",
+    "mcp",
+    "plugin",
+    "dsh-plugin"
+  ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/polarskicpl/dsh-codex-migrate.git"
+    "url": "git+https://github.com/jichengkai/dsh-codex-migrate.git"
   },
   "license": "MIT",
   "type": "module",
@@ -52,14 +61,21 @@
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.2",
-    "@deepseek-ai/dsh-home-paths": "^0.1.5-rc.1",
-    "@deepseek-ai/dsh-tools": "^0.1.5-rc.1",
-    "@deepseek-ai/dsh-typert-protocol": "^0.1.5-rc.1",
+    "@deepseek-ai/dsh-home-paths": "^0.2.2-rc.2",
+    "@deepseek-ai/dsh-tools": "^0.2.2-rc.2",
+    "@deepseek-ai/dsh-typert-protocol": "^0.2.2-rc.2",
     "react": "^18.2.0"
+  },
+  "engines": {
+    "dsh": ">=0.2.2-rc.2"
   },
   "scripts": {
     "build": "node scripts/build-client.js",
     "test": "node --test test/*.test.mjs",
     "test:bridge": "node scripts/test-bridge.mjs"
+  },
+  "homepage": "https://github.com/jichengkai/dsh-codex-migrate#readme",
+  "bugs": {
+    "url": "https://github.com/jichengkai/dsh-codex-migrate/issues"
   }
 }
