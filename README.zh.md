@@ -1,7 +1,7 @@
 # dsh-codex-migrate-next
 
 <div align="center">
-  <a href="https://github.com/jichengkai/dsh-codex-migrate"><img src="https://raw.githubusercontent.com/jichengkai/dsh-codex-migrate/main/images/banner.webp" alt="dsh-codex-migrate banner" width="520"></a>
+  <a href="https://github.com/jichengkai/dsh-codex-migrate-next"><img src="https://raw.githubusercontent.com/jichengkai/dsh-codex-migrate-next/main/images/banner.webp" alt="dsh-codex-migrate banner" width="520"></a>
   <p><strong>在 Codex 与 DeepSeek Harness 之间进行可预测的单向结构化迁移</strong></p>
   <p><a href="./README.md">English</a> · 中文</p>
 </div>
@@ -44,7 +44,7 @@ v2.0 将插件从“导出工具”升级为双端迁移桥：既可以把 Codex
 在 DSH 的助手回复下方，Codex 图标与复制、点赞等原生操作位于同一行：
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/polarskicpl/dsh-codex-migrate/main/images/continue-in-codex-action.png" alt="Continue in Codex action in DSH" width="300">
+  <img src="https://raw.githubusercontent.com/jichengkai/dsh-codex-migrate-next/main/images/continue-in-codex-action.png" alt="Continue in Codex action in DSH" width="300">
 </div>
 
 - 点击 **Codex 图标**：将这一条 DSH 对话导入 Codex 并跳转。
@@ -59,7 +59,7 @@ v2.0 将插件从“导出工具”升级为双端迁移桥：既可以把 Codex
 
 | 组件 | 安装位置 | 作用 |
 | --- | --- | --- |
-| `dsh-codex-migrate` | DSH | 读取、转换和创建 DSH/Codex 会话；提供仅监听本机的一次性交接服务 |
+| `dsh-codex-migrate-next` | DSH | 读取、转换和创建 DSH/Codex 会话；提供仅监听本机的一次性交接服务 |
 | `dsh-codex-bridge` MCP + Skill | Codex | 提供“在 DSH 继续”、MCP 记忆工具和触发规则 |
 
 只安装 DSH 插件仍可使用设置页导入以及 DSH → Codex 按钮；若要从 Codex 发起迁移或使用 MCP 记忆，必须继续完成 Codex 侧安装。
@@ -76,13 +76,13 @@ v2.0 将插件从“导出工具”升级为双端迁移桥：既可以把 Codex
 首次安装：
 
 ```bash
-dsh plugin --profile web add dsh-codex-migrate
+dsh plugin add dsh-codex-migrate-next
 ```
 
 从旧版升级：
 
 ```bash
-dsh plugin --profile web update dsh-codex-migrate
+dsh plugin add dsh-codex-migrate-next
 ```
 
 完成后重启 DSH，打开 **设置 → Codex 迁移**。确认能看到 **已导入的对话**、**按照项目批量迁移** 和 **记忆导入**。
@@ -92,8 +92,8 @@ dsh plugin --profile web update dsh-codex-migrate
 Codex MCP 与 Skill 位于同一个仓库中，因此需要保留本地仓库目录：
 
 ```bash
-git clone https://github.com/polarskicpl/dsh-codex-migrate.git
-cd dsh-codex-migrate
+git clone https://github.com/jichengkai/dsh-codex-migrate-next.git
+cd dsh-codex-migrate-next
 ```
 
 如果你已经克隆了仓库，执行 `git pull` 更新即可。

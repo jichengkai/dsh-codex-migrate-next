@@ -1,7 +1,7 @@
 # dsh-codex-migrate-next
 
 <div align="center">
-  <a href="https://github.com/jichengkai/dsh-codex-migrate"><img src="https://raw.githubusercontent.com/jichengkai/dsh-codex-migrate/main/images/banner.webp" alt="dsh-codex-migrate banner" width="520"></a>
+  <a href="https://github.com/jichengkai/dsh-codex-migrate-next"><img src="https://raw.githubusercontent.com/jichengkai/dsh-codex-migrate-next/main/images/banner.webp" alt="dsh-codex-migrate banner" width="520"></a>
   <p><strong>Predictable one-way structured migration between Codex and DeepSeek Harness</strong></p>
   <p>English · <a href="./README.zh.md">中文</a></p>
 </div>
@@ -44,7 +44,7 @@ The npm `next` and `alpha` DSH channels are not claimed as supported by this rel
 The Codex icon appears beside DSH's native copy and feedback actions:
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/polarskicpl/dsh-codex-migrate/main/images/continue-in-codex-action.png" alt="Continue in Codex action in DSH" width="300">
+  <img src="https://raw.githubusercontent.com/jichengkai/dsh-codex-migrate-next/main/images/continue-in-codex-action.png" alt="Continue in Codex action in DSH" width="300">
 </div>
 
 - Select the **Codex icon** to import one DSH conversation and navigate to Codex.
@@ -59,7 +59,7 @@ The complete experience has two local components:
 
 | Component | Installed in | Purpose |
 | --- | --- | --- |
-| `dsh-codex-migrate` | DSH | Reads, converts, and creates DSH/Codex conversations; hosts the loopback-only handoff service |
+| `dsh-codex-migrate-next` | DSH | Reads, converts, and creates DSH/Codex conversations; hosts the loopback-only handoff service |
 | `dsh-codex-bridge` MCP + Skill | Codex | Provides “Continue in DSH,” MCP memory tools, and the trigger workflow |
 
 The DSH plugin alone supports settings-page imports and DSH → Codex actions. Install the Codex companion as well to start imports from Codex or use MCP memory.
@@ -76,13 +76,13 @@ The DSH plugin alone supports settings-page imports and DSH → Codex actions. I
 First installation:
 
 ```bash
-dsh plugin --profile web add dsh-codex-migrate
+dsh plugin add dsh-codex-migrate-next
 ```
 
 Upgrade from an earlier version:
 
 ```bash
-dsh plugin --profile web update dsh-codex-migrate
+dsh plugin add dsh-codex-migrate-next
 ```
 
 Restart DSH, then open **Settings → Codex Migration**. You should see **Imported Conversations**, **Batch Migration by Project**, and **Memory Import**.
@@ -92,8 +92,8 @@ Restart DSH, then open **Settings → Codex Migration**. You should see **Import
 The MCP server and Skill are bundled in this repository, so keep the cloned directory available locally:
 
 ```bash
-git clone https://github.com/polarskicpl/dsh-codex-migrate.git
-cd dsh-codex-migrate
+git clone https://github.com/jichengkai/dsh-codex-migrate-next.git
+cd dsh-codex-migrate-next
 ```
 
 If you already cloned the repository, update it with `git pull`.
